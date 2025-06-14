@@ -5,7 +5,8 @@ from pathlib import Path
 import json
 from backend.utils import extract_discourse_post_info
 
-model = SentenceTransformer("paraphrase-albert-small-v2")
+model = SentenceTransformer("paraphrase-MiniLM-L3-v2")
+
 client = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
     base_url="https://openrouter.ai/api/v1"
