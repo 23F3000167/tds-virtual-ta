@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: tds-virtual-ta
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port 10000
+    envVars:
+      - key: OPENAI_API_KEY
+        value: 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
