@@ -58,8 +58,6 @@ def extract_discourse_post_info(post: dict) -> Optional[dict]:
         return None
 
 
-
-
 def generate_citation_links(posts: List[Dict]) -> List[Dict[str, str]]:
     """
     Given a list of post metadata (from extract_discourse_post_info),

@@ -5,8 +5,7 @@ from pathlib import Path
 import json
 from backend.utils import extract_discourse_post_info
 
-model = SentenceTransformer("paraphrase-MiniLM-L3-v2")
-
+model = SentenceTransformer("all-MiniLM-L6-v2")
 client = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
     base_url="https://openrouter.ai/api/v1"
@@ -19,36 +18,19 @@ post_metadata = []  # store source info for links
 from pathlib import Path
 import json
 
-
 def build_index():
     base_dir = Path("backend/data")
 
-    # Load markdown files
-    md_dir = base_dir / "tds_pages_md"
-    for md_file in md_dir.glob("*.md"):
-        corpus.append(md_file.read_text(encoding="utf-8").strip())
+    for md_file in (base_dir / "tds_pages_md").glob("*.md"):
+        corpus.append(md_file.read_text(encoding="utf-8"))
 
-    # Load JSON files
-    json_dir = base_dir / "discourse_json"
-    for json_file in json_dir.glob("*.json"):
+    for json_file in (base_dir / "discourse_json").glob("*.json"):
         posts = json.loads(json_file.read_text(encoding="utf-8"))
         for post in posts:
             if isinstance(post, dict) and "content" in post:
                 corpus.append(post["content"].strip())
-
-    
-    max_docs = 200
-    if len(corpus) > max_docs:
-        print(f"[Warning] Trimming corpus to {max_docs} documents to reduce memory.")
-        corpus[:] = corpus[:max_docs]  # in-place trimming
-
-    print(f" Loaded {len(corpus)} documents. Building embeddings...")
-
-    embeddings = model.encode(corpus, convert_to_tensor=True)
-    corpus_embeddings.extend(embeddings)
-
-    print(f" Index built with {len(corpus_embeddings)} vectors.")
-
+                info = extract_discourse_post_info(post)
+                post_metadata.append(info if info else {})
 
 
     embeddings = model.encode(corpus, convert_to_tensor=True)
@@ -93,5 +75,3 @@ def get_answer(query: str) -> dict:
             "answer": f"[OpenRouter Error] {str(e)}",
             "links": []
         }
-
-
