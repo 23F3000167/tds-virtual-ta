@@ -17,7 +17,7 @@ class QARequest(BaseModel):
 def root():
     return {"message": "TDS Virtual TA API is running. Use POST /api/ to ask questions."}
 
-@app.post("/api/")
+@app.post("/")
 async def answer_question(payload: QARequest):
     image_text = "OCR not implemented." if payload.image else ""
     full_query = payload.question + ("\n\n" + image_text if image_text else "")
